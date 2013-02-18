@@ -1626,8 +1626,8 @@ main() {
         message events.</para>
 
         <screen format="linespecific"><remark>lang-dart
-</remark>webSocket.on.message.add((e) {
-  receivedMessage((e as MessageEvent).data);
+</remark>webSocket.onMessage.listen((MessageEvent e) {
+  receivedMessage(e.data);
 });</screen>
 
         <para>The message event handler receives a <ulink
@@ -1665,20 +1665,20 @@ receivedMessage(String data) {
   scheduleReconnect() {
     print('web socket closed, retrying in $retrySeconds seconds');
     if (!reconnectScheduled) {
-      window.setTimeout(() =&gt; connectToWebSocket(retrySeconds*2),
-                                           1000*retrySeconds);
+      new Timer(new Duration(seconds:retrySeconds),
+        () =&gt; connectToWebSocket(retrySeconds*2));
     }
     reconnectScheduled = true;
   }
   
-  webSocket.on.open.add((e) {
+  webSocket.onOpen.listen((e) {
     print('Connected');
   });
   
-  webSocket.on.close.add((e) =&gt; scheduleReconnect());
-  webSocket.on.error.add((e) =&gt; scheduleReconnect());
+  webSocket.onClose.listen((e) =&gt; scheduleReconnect());
+  webSocket.onError.listen((e) =&gt; scheduleReconnect());
   
-  webSocket.on.message.add((MessageEvent e) {
+  webSocket.onMessage.listen((MessageEvent e) {
     _receivedEncodedMessage(e.data);
   });
 }</screen>
